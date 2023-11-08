@@ -28,7 +28,8 @@ const Cell: React.FC<CellProps> = ({ cavern }) => {
     let key = cavern.location.y * 8 + cavern.location.x;
     let cellColor = "brown";
 
-    cavern.reveal();
+    // uncomment to reveal map for debugging
+    //cavern.reveal();
 
     if (!cavern.isRevealed) {
         return (<div key={key} className="cell"></div>);
