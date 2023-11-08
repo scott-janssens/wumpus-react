@@ -166,8 +166,10 @@ export class Engine {
 
             newCavern.hasBat = false;
 
+            const droppedCavern = this._map.getCavern(newPlayerLocation.x, newPlayerLocation.y);
+
             this._map.setRandomBatLocation();
-            this._onBatMoved.dispatch(this, new BatMovedArgs(startLocation, newPlayerLocation, batLocation));
+            this._onBatMoved.dispatch(this, new BatMovedArgs(startLocation, newPlayerLocation, batLocation, droppedCavern.hasWumpus || droppedCavern.isPit));
             this.setPlayerLocation(newPlayerLocation, direction);
         }
         else if (newCavern.hasWumpus) {
@@ -232,9 +234,15 @@ export class BatMovedArgs {
         return this._batLocation;
     }
 
-    public constructor(start: Location, player: Location, end: Location) {
+    private _gameStateChanged: boolean
+    public get gameStateChanged(): boolean {
+        return this._gameStateChanged;
+    }
+
+    public constructor(start: Location, player: Location, end: Location, gameStateChanged: boolean) {
         this._startLocation = start;
         this._playerLocation = player;
         this._batLocation = end;
+        this._gameStateChanged = gameStateChanged;
     }
 }

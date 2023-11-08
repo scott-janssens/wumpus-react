@@ -333,4 +333,14 @@ export class Map {
             cavern.hasBat = false;
         }
     }
+
+    // for debugging
+
+    // public getWumpusCavern(): Cavern {
+    //     return this._map.find(x => x.hasWumpus)!;
+    // }
+
+    // public getPitCavern(): Cavern {
+    //     return this._map.find(x => x.isPit)!;
+    // }
 }

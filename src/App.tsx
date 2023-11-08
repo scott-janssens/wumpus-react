@@ -1,6 +1,6 @@
 import './App.css';
 import Board from './components/board';
-import { Engine, GameState } from './engine/engine';
+import { BatMovedArgs, Engine, GameState } from './engine/engine';
 import { GameDifficulty } from './engine/gameDifficulty';
 import { Direction } from './engine/direction';
 import { ReactNode, useEffect, useRef, useState } from 'react';
@@ -26,6 +26,7 @@ const getScale = (engine: Engine): number => {
 }
 
 function App() {
+  const [lastBatMovedArgs, setLastBatMovedArgs] = useState<BatMovedArgs | null>(null);
   const [isFireMode, setIsFireMode] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
   const [windowScale, setWindowScale] = useState(getScale(engine));
@@ -33,11 +34,13 @@ function App() {
 
   useEffect(() => {
     engine.onGameStateChanged.subscribe(handleGameStateChange);
+    engine.onBatMoved.subscribe(handleBatMoved);
     document.body.addEventListener("keyup", (e) => handleKeyEventRef.current(e));
     window.addEventListener('resize', handleWindowResize);
 
     return () => {
       engine.onGameStateChanged.unsubscribe(handleGameStateChange);
+      engine.onBatMoved.unsubscribe(handleBatMoved);
       document.body.removeEventListener("keyup", (e) => handleKeyEventRef.current(e));
       window.removeEventListener('resize', handleWindowResize);
     }
@@ -49,6 +52,7 @@ function App() {
   };
 
   const handleNewGame = (difficulty: GameDifficulty) => {
+    setLastBatMovedArgs(null);
     engine.startNewGame(difficulty);
     setIsGameComplete(false);
     setGamecounter(gameCounter + 1);
@@ -114,6 +118,16 @@ function App() {
     setIsGameComplete(true);
   };
 
+  const handleBatMoved = (s: Engine, a: BatMovedArgs) => {
+    setLastBatMovedArgs(a);
+  }
+
+  const handleBatDlgClose = (buttonPressed: boolean) => {
+    if (!lastBatMovedArgs!.gameStateChanged) {
+      setLastBatMovedArgs(null);
+    }
+  };
+
   const handGameCompleteDlgClose = (buttonPressed: boolean) => {
     if (buttonPressed) {
       handleNewGame(engine.map.gameDifficultyValues.difficulty);
@@ -121,6 +135,8 @@ function App() {
   };
 
   const setupGameOverDlg = (): ReactNode => {
+    let msg = "";
+
     switch (engine.gameState) {
       case GameState.Won:
         return (
@@ -128,14 +144,20 @@ function App() {
             Your arrow striks true and slays the Wumpus. You are hailed a hero and become a legend in your own time.
           </Modal>);
       case GameState.Eaten:
+        msg = lastBatMovedArgs !== null
+          ? "...next to the fearsome Wumpus. You are devoured for lunch."
+          : "You stumble upon the Wumpus and are devoured for lunch.";
         return (
           <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
-            You stumble upon the Wumpus and are devoured for lunch.
+            {msg}
           </Modal>);
       case GameState.Pit:
+         msg = lastBatMovedArgs !== null
+          ? "...into a bottemless pit."
+          : "You have fallen into a bottemless pit.";
         return (
           <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
-            You have fallen into a bottemless pit.
+            {msg}
           </Modal>);
       case GameState.Missed:
         return (
@@ -153,6 +175,9 @@ function App() {
         <Board map={engine.map} key={engine.map.seed} />
         <HelpPane engine={engine} isHorizontal={isHorizontal} onNewGame={handleNewGame} />
       </div>
+      <Modal isOpen={lastBatMovedArgs !== null} onClose={handleBatDlgClose}>
+        You have encountered a bat who picks you up and drops you{lastBatMovedArgs?.gameStateChanged ? "..." : " elsewhere..."}
+      </Modal>
       <Modal isOpen={isFireMode} onClose={handleFireDlgClose}>
         You have but a single arrow. Press an arrow key to fire in that direction or ESC to continue exploring.
       </Modal>
