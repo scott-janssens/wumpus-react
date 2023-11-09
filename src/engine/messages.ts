@@ -1,4 +1,6 @@
 import { Random } from "./random";
+import { Cavern } from "./cavern";
+import { Direction } from "./direction";
 
 export default class EndGameMessages {
     private _random: Random;
@@ -55,6 +57,25 @@ export default class EndGameMessages {
                 return "You trip into a bottomless pit. Unfortunately, there is no bat around to save you.";
             default:
                 return "You have fallen into a bottomless pit. After falling for several hours, you think it might have been better to have been eaten by the fearsome Wumpus.";
+        }
+    }
+
+    public getMissedDescription(cavern: Cavern, direction: Direction): string {
+        const noise = "he noise attracts the Wumpus and you are devoured for" + this.getMealDescription();
+
+        if (!cavern.getAdjacent(direction)) {
+            return "You take careful aim and fire your arrow directly into a wall. T" + noise + " What were you thinking?";
+        }
+
+        if (!cavern.hasBlood) {
+            return "The fearsome Wumpus wasn't there. In fact there was no sign the fearsome Wumpus was nearby. However, t" + noise;
+        }
+
+        switch (this._random.nextMax(2)) {
+            case 0:
+                return "Close but no cigar; maybe next time.  Only there won't be a next time because t" + noise;
+            default:
+                return "That wasn't where the fearsome Wumpus was. T" + noise;
         }
     }
 

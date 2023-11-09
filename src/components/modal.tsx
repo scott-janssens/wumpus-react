@@ -3,13 +3,14 @@ import "../index.css";
 
 interface ModalProps {
   isOpen: boolean;
+  title?: string;
   hasCloseBtn?: boolean;
   buttonText?: string;
   onClose?: (buttonPressed: boolean) => void;
   children: React.ReactNode;
 };
 
-const Modal: React.FC<ModalProps> = ({ isOpen, buttonText, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, title = null, buttonText, onClose, children }) => {
   const [isModalOpen, setModalOpen] = useState(isOpen);
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -44,8 +45,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, buttonText, onClose, children }) 
 
   return (
     <dialog ref={modalRef} onKeyDown={handleKeyDown} className="modal">
+      {title !== null &&
+        <div className="modal-title">
+          {title}
+        </div>}
       <div className="modal-body">
-        <button className="modal-close-btn" onClick={() => handleCloseModal()}>X</button>
         <div className="modal-content">
           {children}
         </div>
@@ -55,6 +59,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, buttonText, onClose, children }) 
           )}
         </div>
       </div>
+      <button className="modal-close-btn" onClick={() => handleCloseModal()}>X</button>
     </dialog>
   );
 };

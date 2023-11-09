@@ -59,11 +59,14 @@ function App() {
     setGamecounter(gameCounter + 1);
   }
 
+  const fireDirection = useRef<Direction | null>(null);
+
   const handleKeyEvent = (ev: KeyboardEvent) => {
     switch (ev.code) {
       case "ArrowUp":
         if (isFireMode) {
-          engine.fireArrow(Direction.North);
+          fireDirection.current = Direction.North;
+          engine.fireArrow(fireDirection.current);
           handleFireDlgClose();
         }
         else if (lastBatMovedArgs === null) {
@@ -72,7 +75,8 @@ function App() {
         break;
       case "ArrowRight":
         if (isFireMode) {
-          engine.fireArrow(Direction.East);
+          fireDirection.current = Direction.East;
+          engine.fireArrow(fireDirection.current);
           handleFireDlgClose();
         }
         else if (lastBatMovedArgs === null) {
@@ -81,7 +85,8 @@ function App() {
         break;
       case "ArrowDown":
         if (isFireMode) {
-          engine.fireArrow(Direction.South);
+          fireDirection.current = Direction.South;
+          engine.fireArrow(fireDirection.current);
           handleFireDlgClose();
         }
         else if (lastBatMovedArgs === null) {
@@ -90,7 +95,8 @@ function App() {
         break;
       case "ArrowLeft":
         if (isFireMode) {
-          engine.fireArrow(Direction.West);
+          fireDirection.current = Direction.West;
+          engine.fireArrow(fireDirection.current);
           handleFireDlgClose();
         }
         else if (lastBatMovedArgs === null) {
@@ -98,7 +104,9 @@ function App() {
         }
         break;
       case "Space":
-        handleFireDlgOpen();
+        if (lastBatMovedArgs === null) {
+          handleFireDlgOpen();
+        }
         break;
     }
   };
@@ -142,7 +150,7 @@ function App() {
     switch (engine.gameState) {
       case GameState.Won:
         return (
-          <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
+          <Modal isOpen={isGameComplete} title="Victory!" onClose={handGameCompleteDlgClose} buttonText="New Game">
             {messages.getVictoryDescription()}
           </Modal>);
       case GameState.Eaten:
@@ -150,7 +158,7 @@ function App() {
           ? "...next to the fearsome Wumpus. You are devoured for " + messages.getMealDescription()
           : messages.getEatenDescription();
         return (
-          <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
+          <Modal isOpen={isGameComplete} title="Game Over" onClose={handGameCompleteDlgClose} buttonText="New Game">
             {msg}
           </Modal>);
       case GameState.Pit:
@@ -158,13 +166,13 @@ function App() {
           ? "...into a bottemless pit."
           : messages.getPitDescription();
         return (
-          <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
+          <Modal isOpen={isGameComplete} title="Game Over" onClose={handGameCompleteDlgClose} buttonText="New Game">
             {msg}
           </Modal>);
       case GameState.Missed:
         return (
-          <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
-            That wasn't where the Wumpus was.  The noise attracts the Wumpus and you are devoured for breakfast.
+          <Modal isOpen={isGameComplete} title="Game Over" onClose={handGameCompleteDlgClose} buttonText="New Game">
+            {messages.getMissedDescription(engine.map.getCavern(engine.playerLocation.x, engine.playerLocation.y), fireDirection.current!)}
           </Modal>);
     }
   }
@@ -177,10 +185,10 @@ function App() {
         <Board map={engine.map} key={engine.map.seed} />
         <HelpPane engine={engine} isHorizontal={isHorizontal} onNewGame={handleNewGame} />
       </div>
-      <Modal isOpen={lastBatMovedArgs !== null} onClose={handleBatDlgClose}>
+      <Modal isOpen={lastBatMovedArgs !== null} title="Bat!" onClose={handleBatDlgClose}>
         You have encountered a bat who picks you up and drops you{lastBatMovedArgs?.gameStateChanged ? "..." : " elsewhere..."}
       </Modal>
-      <Modal isOpen={isFireMode} onClose={handleFireDlgClose}>
+      <Modal isOpen={isFireMode} title="Attack!" onClose={handleFireDlgClose}>
         You have but a single arrow. Press an arrow key to fire in that direction or ESC to continue exploring.
       </Modal>
       {setupGameOverDlg()}
