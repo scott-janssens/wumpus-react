@@ -106,8 +106,10 @@ code {
 
 .gameControls {
   position: absolute;
+  margin-bottom: -20px;
   display: grid;
-  grid-template: 54px / 176px 176px;
+  grid-template: 54px auto / 176px 176px;
+  row-gap: 12px;
   column-gap: 16px;
   bottom: 30px;
 }
@@ -216,4 +218,10 @@ code {
 
 .modal::backdrop {
   background: hsl(0 0% 0% / 50%);
+}
+
+.code-link {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  text-align: center;
 }

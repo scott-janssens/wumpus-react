@@ -105,7 +105,9 @@ const HelpPane: React.FC<HelpProps> = ({ engine, isHorizontal, onNewGame }) => {
                     </select>
                     <button id="newGameBtn" className="button" onClick={(e) => {
                         onNewGame(Number(difficulty) as GameDifficulty);
-                        (document.activeElement as HTMLElement).blur();}}>New Game</button>
+                        (document.activeElement as HTMLElement).blur();
+                    }}>New Game</button>
+                    <a className="code-link" href="https://github.com/scott-janssens/wumpus-react">Source Code</a>
                 </div>
             </div>
         );
