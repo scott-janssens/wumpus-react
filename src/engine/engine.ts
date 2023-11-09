@@ -15,9 +15,12 @@ export enum GameState {
 }
 
 export class Engine {
-    private _random: Random = new Random();
     private _lastDirection: Direction;
 
+    private _random: Random = new Random();
+    public get random(): Random {
+        return this._random;
+    }
 
     private _onGameStateChanged = new SimpleEventDispatcher<GameState>();
     public get onGameStateChanged() {

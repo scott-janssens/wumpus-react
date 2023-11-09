@@ -6,6 +6,7 @@ import { Direction } from './engine/direction';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import Modal from './components/modal';
 import HelpPane from './components/helpPane';
+import EndGameMessages from './engine/messages';
 
 const engine = new Engine();
 engine.startNewGame(GameDifficulty.Normal);
@@ -65,7 +66,7 @@ function App() {
           engine.fireArrow(Direction.North);
           handleFireDlgClose();
         }
-        else {
+        else if (lastBatMovedArgs === null) {
           engine.movePlayer(Direction.North);
         }
         break;
@@ -74,7 +75,7 @@ function App() {
           engine.fireArrow(Direction.East);
           handleFireDlgClose();
         }
-        else {
+        else if (lastBatMovedArgs === null) {
           engine.movePlayer(Direction.East);
         }
         break;
@@ -83,7 +84,7 @@ function App() {
           engine.fireArrow(Direction.South);
           handleFireDlgClose();
         }
-        else {
+        else if (lastBatMovedArgs === null) {
           engine.movePlayer(Direction.South);
         }
         break;
@@ -92,7 +93,7 @@ function App() {
           engine.fireArrow(Direction.West);
           handleFireDlgClose();
         }
-        else {
+        else if (lastBatMovedArgs === null) {
           engine.movePlayer(Direction.West);
         }
         break;
@@ -135,26 +136,27 @@ function App() {
   };
 
   const setupGameOverDlg = (): ReactNode => {
+    const messages = new EndGameMessages(engine.random);
     let msg = "";
 
     switch (engine.gameState) {
       case GameState.Won:
         return (
           <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
-            Your arrow striks true and slays the Wumpus. You are hailed a hero and become a legend in your own time.
+            {messages.getVictoryDescription()}
           </Modal>);
       case GameState.Eaten:
         msg = lastBatMovedArgs !== null
-          ? "...next to the fearsome Wumpus. You are devoured for lunch."
-          : "You stumble upon the Wumpus and are devoured for lunch.";
+          ? "...next to the fearsome Wumpus. You are devoured for " + messages.getMealDescription()
+          : messages.getEatenDescription();
         return (
           <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
             {msg}
           </Modal>);
       case GameState.Pit:
-         msg = lastBatMovedArgs !== null
+        msg = lastBatMovedArgs !== null
           ? "...into a bottemless pit."
-          : "You have fallen into a bottemless pit.";
+          : messages.getPitDescription();
         return (
           <Modal isOpen={isGameComplete} onClose={handGameCompleteDlgClose} buttonText="New Game">
             {msg}
