@@ -111,15 +111,4 @@ export class Cavern {
 
         return result;
     }
-
-    public getExitCode(): number {
-        let exits = 0;
-
-        if (this.north != null) exits = 1;
-        if (this.east != null) exits += 2;
-        if (this.south != null) exits += 4;
-        if (this.west != null) exits += 8;
-
-        return exits;
-    }
 }

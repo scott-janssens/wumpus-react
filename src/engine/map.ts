@@ -123,19 +123,15 @@ export class Map {
         }
 
         // Set Wumpus
-        let wumpusCavern: Cavern;
+        let wumpusCavern: Cavern | null = null;
 
-        while (true) {
+        while (wumpusCavern === null) {
             let index = this.toMapIndex(this._random.nextMax(this.MapWidth),
                 this._random.nextMax(this.MapHeight));
 
-            if (this._difficultyValues.difficulty !== GameDifficulty.Easy || (this._difficultyValues.difficulty === GameDifficulty.Easy && this._map[index].isCave)) {
+            if (this._map[index].isCave) {
                 wumpusCavern = this._map[index];
-
-                if (wumpusCavern.isCave) {
-                    wumpusCavern.hasWumpus = true;
-                    break;
-                }
+                wumpusCavern.hasWumpus = true;
             }
         }
 
@@ -147,18 +143,16 @@ export class Map {
     }
 
     public setRandomBatLocation(): Cavern {
-        let cavern: Cavern;
+        let cavern: Cavern | null = null;
 
-        while (true) {
+        while (cavern === null) {
             let index = this.toMapIndex(
                 this._random.nextMax(this.MapWidth),
                 this._random.nextMax(this.MapHeight));
 
-            cavern = this._map[index];
-
-            if (!cavern.hasBat && cavern.isCave) {
-                this._map[index].hasBat = true;
-                break;
+            if (!this._map[index].hasBat && this._map[index].isCave) {
+                cavern = this._map[index];
+                cavern.hasBat = true;
             }
         }
 

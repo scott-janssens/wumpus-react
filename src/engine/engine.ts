@@ -84,7 +84,7 @@ export class Engine {
         return new Location(this._random.nextMax(this._map.MapWidth), this._random.nextMax(this._map.MapHeight));
     }
 
-    public movePlayer(direction: Direction) {
+    public movePlayer(direction: Direction): void {
         if (this.gameState !== GameState.Running)
             return;
 
