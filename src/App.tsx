@@ -7,7 +7,9 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import Modal from './components/modal';
 import HelpPane from './components/helpPane';
 import EndGameMessages from './engine/messages';
+import Swipe from './helpers/swipe';
 
+const swipe = new Swipe(document.body);
 const engine = new Engine();
 engine.startNewGame(GameDifficulty.Normal);
 

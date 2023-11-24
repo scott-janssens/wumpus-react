@@ -33,7 +33,8 @@ const HelpPane: React.FC<HelpProps> = ({ engine, isHorizontal, onNewGame }) => {
         "of blood splatters within two spaces of the Wumpus (not including tunnels). " +
         "Beware of giant bats which can carry you to random locations and bottomless pits.";
     const description2 = "Use the ARROW keys to move. When you are adjacent to where you have deduced the Wumpus must be, press " +
-        "SPACE to fire your arrow. You have only one arrow with which to kill the Wumpus. ";
+        "SPACE to fire your arrow. You have only one arrow with which to kill the Wumpus. " + 
+        "On mobile devices you can swipe for direction or double tap and swipe to fire your arrow.";
 
     const getDescription = () => {
         return (<div><p>{description1}</p><p>{description2}</p></div>);
@@ -98,7 +99,7 @@ const HelpPane: React.FC<HelpProps> = ({ engine, isHorizontal, onNewGame }) => {
         return (
             <div className="centeringContainer">
                 <div className="gameControls">
-                    <select className="selectbox" value={difficulty.toString()} onChange={e => setDifficulty(e.target.value)}>
+                    <select className="selectbox" name="difficulty-select" title="Difficulty" value={difficulty.toString()} onChange={e => setDifficulty(e.target.value)}>
                         <option value="0">Easy</option>
                         <option value="1">Normal</option>
                         <option value="2">Hard</option>
